@@ -1,0 +1,59 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
+
+
+build: debian/build-stamp 
+debian/build-stamp:
+	dh_testdir
+	mkdir -p build/
+	# The open-vm source is broken. We need the '-u' option so that m-a can
+	# write in the source directory, but we also need to expand the open-vm
+	# tarball in the /usr/src/ directory because it has hardcoded paths. The
+	# tarball is expanded with a pbuilder hook. Ubuntu sucks.
+	m-a build -t --force -l 2.6.31-19-generic open-vm -u build/
+	touch $@
+
+
+install: build
+	dh_testdir
+	dh_testroot
+	mkdir -p debian/klinuxmod/lib/modules/2.6.31-19-generic/misc/
+	for file in vmmemctl vmsync vmhgfs; do \
+	    cp build/usr_src/modules/open-vm/modules/linux/$$file.o \
+	       debian/klinuxmod/lib/modules/2.6.31-19-generic/misc/$$file.ko; \
+	done
+
+
+binary-common:
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_compress 
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+
+binary-indep:
+binary-arch: build install
+	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
+
+binary: binary-arch binary-indep
+
+
+.PHONY: build clean binary-indep binary-arch binary install
+

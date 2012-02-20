@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+from kfile import *
+
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: setversion <version>")
+        sys.exit(1)
+    
+    version = sys.argv[1]
+    
+    file_list = [ "debian/control", "debian/postinst", "debian/rules" ]
+    for file in file_list:
+        data = read_file(file)
+        data = re.sub("\d[\d\.\-]+-generic", version, data)
+        write_file(file, data)
+
+main()
+

@@ -1,0 +1,12 @@
+Source: klinuxmod
+Section: teambox-internal
+Priority: optional
+Maintainer:
+Build-Depends: debhelper (>= 5), module-assistant, open-vm-source, linux-headers-2.6.31-19-generic
+Standards-Version: 3.7.2
+
+Package: klinuxmod
+Architecture: any
+Depends: linux-image-2.6.31-19-generic
+Description: Teambox pre-compiled open-vm kernel module
+ This package contains the Teambox pre-compiled open-vm module.

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+    depmod -a -F /boot/System.map-2.6.31-19-generic 2.6.31-19-generic || true
+fi
+
